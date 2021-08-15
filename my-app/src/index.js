@@ -22,6 +22,9 @@ function SquareResO(props) {
     )
 }
 
+
+
+
 class Board extends React.Component {
 
   renderSquare(i) {
@@ -34,9 +37,11 @@ class Board extends React.Component {
       />
     )}
 
+ 
+
      renderSquareResX(i){
       return(
-      <SquareResX value = {this.props.resultTable[i]}  /> // it goes to square the same as the value
+      <SquareResX value = {this.props.resultTable[i]}  /> // it goes to the square of the same value
       )
     }
 
@@ -64,6 +69,7 @@ class Board extends React.Component {
           {this.renderSquare(7)}
           {this.renderSquare(8)}
         </div>
+        
         <table className="tableWithResults">
         <tr>
             <th> X </th>
@@ -90,10 +96,53 @@ class Board extends React.Component {
         {this.renderSquareResO(9)}
         </tr>
         </table>
+     
       </div>
+     
     );
   }
 }
+
+
+
+class Players extends React.Component {
+
+  playersCreate(props){
+    return (
+      <button className = {props.value} style = {props.style} onClick = {props.onClick}> 
+        {props.value} 
+      </button>
+    )
+  }
+
+  renderPlayers (x){
+
+    function choosePlayer(e){
+      console.log(e.target.innerHTML);
+    }
+
+    return (
+      <playersCreate 
+        value = {x}
+        onClick = {choosePlayer}
+      />
+    )
+  }
+
+  render(){
+    return(
+  <div>
+  <p> Choose your player </p>
+  <div className = 'X'>
+    {this.playersCreate('X')}
+  </div>
+  <div className = 'O'>
+    {this.playersCreate('O')}
+  </div>
+  </div> )
+  }
+}
+
 
 class Game extends React.Component {
 
@@ -106,28 +155,28 @@ class Game extends React.Component {
       stepNumber: 0,
       resultTable: Array(0),
       cellColors: Array(9).fill(null),
+      playerIsChosen: false,
       arrForWinner:null,
+      winner:null,
     };
   }
   
   handleClick(i) { 
    
-    const history = this.state.history.slice(0, this.state.stepNumber + 1); // an Array with objects
-    const current = history[history.length - 1];
+    const history = this.state.history.slice(0, this.state.stepNumber + 1); // the last Array object with Array
+    const current = history[history.length - 1]; 
     const squares = current.squares.slice();  // the last array 
     const cellColors = this.state.cellColors.slice();
     
     let resultTableChanges = this.state.resultTable.slice();
     resultTableChanges.push(i);
 
-    if(calculateWinner(squares) || squares[i]) { 
-    return
-      }
+    if(this.calculateWinner(squares) || squares[i]) return;
 
     squares[i] = this.state.xIsNext ? 'X' : "O";
     let color = (squares[i] === 'X') ? {'background':'#ff6666'}: {'background':'#809fff'};
     
-    cellColors.splice(i, 1, color );
+    cellColors.splice(i, 1, color );  // arr to remember colors for cells
 
     this.setState({
       history: history.concat([  // add additional obj with array
@@ -140,7 +189,47 @@ class Game extends React.Component {
       resultTable: resultTableChanges,
       cellColors: cellColors,  // add the color for the specific cell,
     });
-    if(calculateWinner(squares)){this.changeStateForWinner(squares)}
+
+    if(this.calculateWinner(squares)){
+     let winnerArr = this.calculateWinner(squares); // arr with numbers for winner;
+
+      this.setState({ 
+      winner:squares[winnerArr[0]],
+      arrForWinner:winnerArr,
+    })
+
+    this.changeStateForWinner(winnerArr) // set yellow color for winner row.
+    }
+  }
+
+  computerPlayer(lastArr){
+    let event = new Event('click');
+    
+  }
+
+   calculateWinner(squares) {
+  
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+  
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+  
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        
+          return [a,b,c];
+      }
+    }
+  
+    return null;
   }
 
   jumpTo(step) {
@@ -152,32 +241,25 @@ class Game extends React.Component {
 
   changeStateForWinner(squares){
     const colorForWinner = {'background' :'yellow'};
-    const history = this.state.history.slice(0, this.state.stepNumber + 1); // an Array with objects
-    const squares2 = squares.slice();  // the last array 
     let cellColors = this.state.cellColors.slice();
-  
-      let arr = addWinnerSquaresToArr(squares2); // number of cells for winner
 
-      console.log(arr)
-      for(let j=0; j<arr.length; j++){
-        cellColors.splice(arr[j], 1, colorForWinner)
+        for(let j=0; j<squares.length; j++){
+        cellColors.splice(squares[j], 1, colorForWinner);
       }
-      
-      console.log(cellColors)
-
+   
       this.setState({
         cellColors:cellColors,
       })
-      console.log(this.state.cellColors)
-  };
+    };
 
    render() {   
     const history = this.state.history;
-    const current = history[this.state.stepNumber]
-    let winner = calculateWinner(current.squares) 
+    const current = history[this.state.stepNumber];
+    let winner = this.calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
     const desc = move ? 'Go to move #' + move : 'Go to start';
+
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}> {desc} </button>
@@ -198,6 +280,7 @@ class Game extends React.Component {
       <div className="game">
         <div className="game-board">
           <Board squares={current.squares} style = {this.state.cellColors}  resultTable = {this.state.resultTable} onClick={i => this.handleClick(i)}  />
+          <Players />
         </div>
         <div className="game-info">
           <div>{status}</div>
@@ -207,60 +290,6 @@ class Game extends React.Component {
     );
   }
 };
-
-function calculateWinner(squares) {
-  
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-  
-           return squares[a];
-    }
-  }
-  return null;
-}
-
-function addWinnerSquaresToArr (squares){
-
-const lines = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
-
-let arr = [];
-
-for (let i = 0; i < lines.length; i++) {
-  const [a, b, c] = lines[i];
-
-  if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-
-    arr.push(a,b,c);
-   
-    return arr;
-  }
-}
-return null;
-
-}
-
 
 
 ReactDOM.render(

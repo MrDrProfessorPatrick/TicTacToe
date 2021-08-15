@@ -61,3 +61,30 @@ body {
     height: 20px;
     border: 1px solid rgb(70, 65, 65);
   }
+
+  .X{
+    display: inline;
+
+  }
+
+  .O{
+    display: inline;
+    
+  }
+
+  .X>button{
+    background-color: #ff6666;
+    padding: 15px 30px;
+    margin: 2px;
+    font-size: 20px; 
+     
+    cursor: pointer;  
+  }
+
+  .O>button {
+    background-color: #809fff;
+    padding: 15px 30px;
+    margin: 2px;
+    font-size: 20px;
+    cursor: pointer;
+  }
