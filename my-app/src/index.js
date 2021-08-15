@@ -115,19 +115,7 @@ class Players extends React.Component {
     )
   }
 
-  renderPlayers (x){
 
-    function choosePlayer(e){
-      console.log(e.target.innerHTML);
-    }
-
-    return (
-      <playersCreate 
-        value = {x}
-        onClick = {choosePlayer}
-      />
-    )
-  }
 
   render(){
     return(
