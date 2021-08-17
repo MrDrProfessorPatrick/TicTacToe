@@ -23,8 +23,6 @@ function SquareResO(props) {
 }
 
 
-
-
 class Board extends React.Component {
 
   renderSquare(i) {
@@ -36,8 +34,6 @@ class Board extends React.Component {
         
       />
     )}
-
- 
 
      renderSquareResX(i){
       return(
@@ -98,29 +94,26 @@ class Board extends React.Component {
         </table>
      
       </div>
-     
     );
   }
 }
 
 
-
 class Players extends React.Component {
 
-  playersCreate(props){
+  playersCreate(sign){
     return (
-      <button className = {props.value} style = {props.style} onClick = {props.onClick}> 
-        {props.value} 
+      <button className = {this.props.value} style = {this.props.style} playingFor = {this.props.playingFor} onClick = {this.props.onClick}> 
+        {sign} 
       </button>
     )
   }
-
-
-
+  
   render(){
     return(
   <div>
   <p> Choose your player </p>
+  <p> {this.props.playingFor} </p>
   <div className = 'X'>
     {this.playersCreate('X')}
   </div>
@@ -140,13 +133,16 @@ class Game extends React.Component {
     this.state = {
       history: [{ squares: Array(9).fill(null) }],
       xIsNext: true,
+      playerIsChosen:null,
       stepNumber: 0,
       resultTable: Array(0),
       cellColors: Array(9).fill(null),
-      playerIsChosen: false,
+      computerTurn: null,
       arrForWinner:null,
       winner:null,
-    };
+      playingFor:null,
+        };
+    this.chosePlayer = this.chosePlayer.bind(this);
   }
   
   handleClick(i) { 
@@ -165,6 +161,7 @@ class Game extends React.Component {
     let color = (squares[i] === 'X') ? {'background':'#ff6666'}: {'background':'#809fff'};
     
     cellColors.splice(i, 1, color );  // arr to remember colors for cells
+    console.log("this in handleclick " + this);
 
     this.setState({
       history: history.concat([  // add additional obj with array
@@ -186,12 +183,63 @@ class Game extends React.Component {
       arrForWinner:winnerArr,
     })
 
-    this.changeStateForWinner(winnerArr) // set yellow color for winner row.
+    this.changeStateForWinner(winnerArr) // set yellow color for the winner row.
     }
   }
 
-  computerPlayer(lastArr){
-    let event = new Event('click');
+  chosePlayer(event){
+    console.log("FUNC Works")
+    if(event.target.innerHTML == "X"){
+      console.log(this);
+
+      this.setState({
+        playerIsChosen:"X",
+        computerTurn: false,
+      })
+
+    }
+    this.setState({
+      playingFor: <p> You are playing for {event.target.innerHTML} </p>
+    })
+    return 
+  }
+
+  computerClick(){
+    // should chose the cell itself
+
+    const history = this.state.history.slice(0, this.state.stepNumber + 1); // the last Array object with Array
+    const current = history[history.length - 1]; 
+    const squares = current.squares.slice();  // the last array [0...9]
+    let emptySquares = [];
+
+    for(let i = 0; i<squares.length; i++){
+      if(squares[i] === null){emptySquares.push(i)}
+    }
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    let squareToChose = getRandomInt(emptySquares.length-1);
+
+    if(this.state.playerIsChosen){
+      this.handleClick(squareToChose);
+    }
+
+
+    // const lines = [
+    //   [0, 1, 2],
+    //   [3, 4, 5],
+    //   [6, 7, 8],
+    //   [0, 3, 6],
+    //   [1, 4, 7],
+    //   [2, 5, 8],
+    //   [0, 4, 8],
+    //   [2, 4, 6],
+    // ];
+
+    // put X  according to the winner arr
+    // if enemy has one cell to win - put X to that line
     
   }
 
@@ -267,8 +315,9 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board squares={current.squares} style = {this.state.cellColors}  resultTable = {this.state.resultTable} onClick={i => this.handleClick(i)}  />
-          <Players />
+          <Board squares={current.squares} style = {this.state.cellColors}  resultTable = {this.state.resultTable} computerClick = {this.computerClick} onClick={i => this.handleClick(i)}  />
+          <Players playingFor = {this.state.playingFor} onClick = {this.chosePlayer} />
+
         </div>
         <div className="game-info">
           <div>{status}</div>
@@ -285,6 +334,8 @@ ReactDOM.render(
   document.getElementById('root')
 )
 
-// ========================================
+// TO DO 
+// add fuctionaliti to choose the player X or O -- DONE
+// funtionality for computer player
 
 
