@@ -143,6 +143,12 @@ class Game extends React.Component {
       playingFor:null,
         };
     this.chosePlayer = this.chosePlayer.bind(this);
+    this.computerClick = this.computerClick.bind(this);
+  }
+
+  componentDidUpdate(){
+   if(this.state.computerTurn) this.computerClick()
+    
   }
   
   handleClick(i) { 
@@ -173,6 +179,7 @@ class Game extends React.Component {
       xIsNext: !this.state.xIsNext,
       resultTable: resultTableChanges,
       cellColors: cellColors,  // add the color for the specific cell,
+      computerTurn:!this.state.computerTurn,
     });
 
     if(this.calculateWinner(squares)){
@@ -188,7 +195,8 @@ class Game extends React.Component {
   }
 
   chosePlayer(event){
-    console.log("FUNC Works")
+    console.log("FUNC Works");
+
     if(event.target.innerHTML == "X"){
       console.log(this);
 
@@ -196,7 +204,14 @@ class Game extends React.Component {
         playerIsChosen:"X",
         computerTurn: false,
       })
+    }
 
+    if(event.target.innerHTML == "O"){
+      this.setState({
+        playerIsChosen: "O",
+        computerTurn: true,
+      })
+    
     }
     this.setState({
       playingFor: <p> You are playing for {event.target.innerHTML} </p>
@@ -221,9 +236,13 @@ class Game extends React.Component {
     }
 
     let squareToChose = getRandomInt(emptySquares.length-1);
+    console.log("squareToChose " + squareToChose)
 
     if(this.state.playerIsChosen){
-      this.handleClick(squareToChose);
+      this.handleClick(emptySquares[squareToChose]);
+      this.setState({
+        computerTurn:false,
+      })
     }
 
 
