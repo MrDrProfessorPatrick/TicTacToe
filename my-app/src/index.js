@@ -227,6 +227,17 @@ class Game extends React.Component {
     const squares = current.squares.slice();  // the last array [0...9]
     let emptySquares = [];
 
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
     for(let i = 0; i<squares.length; i++){
       if(squares[i] === null){emptySquares.push(i)}
     }
@@ -244,18 +255,6 @@ class Game extends React.Component {
         computerTurn:false,
       })
     }
-
-
-    // const lines = [
-    //   [0, 1, 2],
-    //   [3, 4, 5],
-    //   [6, 7, 8],
-    //   [0, 3, 6],
-    //   [1, 4, 7],
-    //   [2, 5, 8],
-    //   [0, 4, 8],
-    //   [2, 4, 6],
-    // ];
 
     // put X  according to the winner arr
     // if enemy has one cell to win - put X to that line
