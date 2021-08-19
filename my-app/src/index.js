@@ -141,6 +141,7 @@ class Game extends React.Component {
       arrForWinner:null,
       winner:null,
       playingFor:null,
+      isfirstStep:true,
         };
     this.chosePlayer = this.chosePlayer.bind(this);
     this.computerClick = this.computerClick.bind(this);
@@ -221,11 +222,50 @@ class Game extends React.Component {
 
   computerClick(){
     // should chose the cell itself
-
+    // will add functionality 
+    // ...chose the first sign by random 
+    //... check for X and O and add to lines arr 
+    //... check lines arr to chose the next move 
     const history = this.state.history.slice(0, this.state.stepNumber + 1); // the last Array object with Array
     const current = history[history.length - 1]; 
     const squares = current.squares.slice();  // the last array [0...9]
+    let squareToChose;
     let emptySquares = [];
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    function chooseSquare(lines){
+      let res;
+
+      for(let item of lines){
+        if(this.state.playerIsChosen === "X"){
+          if(item.includes("X")){
+            for(let number of item){
+              if (typeof number === 'number'){
+              res = number;
+              break;
+            }
+          }
+            
+          }  
+        }
+
+        if(this.state.playerIsChosen === "O"){
+          if(item.includes("O")){
+            for(let number of item){
+              if (typeof number === 'number'){
+              res = number;
+              break;
+            }
+          }
+            
+          }  
+        }
+      }
+      return res;
+    }
 
     const lines = [
       [0, 1, 2],
@@ -239,20 +279,32 @@ class Game extends React.Component {
     ];
 
     for(let i = 0; i<squares.length; i++){
-      if(squares[i] === null){emptySquares.push(i)}
+
+      lines.forEach((el)=>{
+
+       // if(squares[i] === null){lines.forEach((el)=>{if(el.includes(i)){el.splice(el.indexOf(i), 1, null)}})}
+        if(squares[i] === 'X'){lines.forEach((el)=>{if(el.includes(i)){el.splice(el.indexOf(i), 1, 'X')}})}
+        if(squares[i] === 'O'){lines.forEach((el)=>{if(el.includes(i)){el.splice(el.indexOf(i), 1, 'O')}})}
+        
+      })
+      
+    }
+    
+
+    if(this.state.isfirstStep){
+      squareToChose = getRandomInt(...emptySquares);
     }
 
-    function getRandomInt(max) {
-      return Math.floor(Math.random() * max);
+    if(!this.state.isfirstStep){
+      squareToChose = chooseSquare(lines);
     }
-
-    let squareToChose = getRandomInt(emptySquares.length-1);
-    console.log("squareToChose " + squareToChose)
+    console.log("squareToChose", squareToChose)
 
     if(this.state.playerIsChosen){
-      this.handleClick(emptySquares[squareToChose]);
+      this.handleClick(squareToChose);
       this.setState({
         computerTurn:false,
+        isfirstStep: true,
       })
     }
 
