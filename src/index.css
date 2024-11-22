@@ -80,14 +80,54 @@ table > tr > th {
   display: inline;
 }
 
-.gameStatus {
+.gameStatusInitial {
   margin-top: 20px;
   height: 40px;
   border: 3px solid black;
   font-size: 16px;
   text-align: center;
   line-height: 40px;
-  background-color: rgb(104, 155, 104);
+  background-color: rgb(58, 199, 58);
+}
+
+.gameStatusX {
+  margin-top: 20px;
+  height: 40px;
+  border: 3px solid black;
+  font-size: 16px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #ff6666;
+}
+
+.gameStatusO {
+  margin-top: 20px;
+  height: 40px;
+  border: 3px solid black;
+  font-size: 16px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #809fff;
+}
+
+.winnerX{
+  margin-top: 20px;
+  height: 40px;
+  border: 3px solid black;
+  font-size: 16px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #ff6666;
+}
+
+.winnerO{
+  margin-top: 20px;
+  height: 40px;
+  border: 3px solid black;
+  font-size: 16px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #809fff;
 }
 
 .playingFor {
