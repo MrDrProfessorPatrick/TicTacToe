@@ -5,36 +5,38 @@ export default class GameStatus extends Component {
     super(props);
 
     this.state = {
-      style:'gameStatusInitial',
-    }
+      style: "gameStatusInitial",
+    };
 
     this.gameStatus = "";
   }
 
-  componentDidUpdate(prevProps){
-    console.log(prevProps, this.gameStatus)
-    if(prevProps.xIsNext === true){
-      this.setState({
-        style:'gameStatusX'
-      })
-     } 
+  componentDidUpdate(prevProps) {
+    console.log(prevProps, this.gameStatus);
 
-    //  if(prevProps.xIsNext === false){
-    //   this.setState({
-    //     style:'gameStatusO'
-    //   })
-    //  } 
+    if (prevProps.xIsNext !== this.props.xIsNext) {
+      if (this.props.xIsNext === true) {
+        this.setState({
+          style: "gameStatusX",
+        });
+      } else {
+        this.setState({
+          style: "gameStatusO",
+        });
+      }
+    }
 
-
-           // if(this.winnerSign === 'X'){
-      //   this.setState({
-      //     style:'winnerX'
-      //   })
-      // } else {
-      //   this.setState({
-      //     style:'winnerO'
-      //   })
-      // }
+    if (prevProps.winnerSign !== this.props.winnerSign) {
+      if (this.props.winnerSign === "X") {
+        this.setState({
+          style: "winnerX",
+        });
+      } else {
+        this.setState({
+          style: "winnerO",
+        });
+      }
+    }
   }
 
   render() {
