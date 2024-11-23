@@ -235,12 +235,14 @@ export class Game extends React.Component {
     }
 
     if (playerIsChosen) {
-      let squareToChose = chooseSquare(lines);
-      console.log("squareToChose", squareToChose);
-      this.handleClick(squareToChose);
-      this.setState({
-        computerTurn: false,
-      });
+      setTimeout(()=>{
+        let squareToChose = chooseSquare(lines);
+        this.handleClick(squareToChose);
+        this.setState({
+          computerTurn: false,
+        });
+      },[1000])
+
     }
 
     // put X  according to the winner arr
