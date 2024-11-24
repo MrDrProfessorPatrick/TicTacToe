@@ -29,11 +29,14 @@ export class Game extends React.Component {
     this.jumpTo = this.jumpTo.bind(this);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.computerTurn === true) return;
     if (this.state.computerTurn) this.computerClick();
   }
 
-  handleClick(i) {
+  handleClick(i, whoIsClicking) {
+    if(this.state.computerTurn && this.state.playerIsChosen && whoIsClicking !== 'computer') return;
+    
     const history = this.state.history.slice(0, this.state.stepNumber + 1); // the last Array object with Array
     const current = history[history.length - 1];
     const squares = current.squares.slice(); // the last array
@@ -64,8 +67,13 @@ export class Game extends React.Component {
       xIsNext: !this.state.xIsNext,
       resultTable: resultTableChanges,
       cellColors: cellColors, // add the color for the specific cell,
-      computerTurn: !this.state.computerTurn,
     });
+
+    if(this.state.playerIsChosen){
+      this.setState({
+        computerTurn: !this.state.computerTurn,
+      })
+    }
 
     if (this.calculateWinner(squares)) {
       let [winnerSign, winnerArr] = this.calculateWinner(squares); // arr with numbers for winner;
@@ -81,6 +89,7 @@ export class Game extends React.Component {
   }
 
   chosePlayer(event) {
+    if(this.state.playerIsChosen) return;
     let playerSign = event.target.innerHTML === "X" ? "X" : "O";
     if (event.target.innerHTML === "X") {
       this.setState({
@@ -237,7 +246,7 @@ export class Game extends React.Component {
     if (playerIsChosen) {
       setTimeout(()=>{
         let squareToChose = chooseSquare(lines);
-        this.handleClick(squareToChose);
+        this.handleClick(squareToChose, 'computer');
         this.setState({
           computerTurn: false,
         });
@@ -331,7 +340,7 @@ export class Game extends React.Component {
             squares={current.squares}
             style={this.state.cellColors}
             resultTable={this.state.resultTable}
-            onClick={(i) => this.handleClick(i)}
+            onClick={(i) => this.handleClick(i, 'player')}
           />
         </div>
 
